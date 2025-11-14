@@ -15,7 +15,7 @@ class ForeignCurrencyDepositAnalyzer:
         self.initial_hkd = initial_hkd
         self.results = {}
     
-    def calculate_deposit_returns(self, currency_name, hkd_to_currency_rate, 
+    def calculate_deposit_returns(self, currency_name, buy_rate, sell_rate, 
                                  currency_interest_rate, hkd_interest_rate=0.023,
                                  exchange_rate_range=None, years=1):
         """
@@ -33,8 +33,8 @@ class ForeignCurrencyDepositAnalyzer:
         hkd_future_value = self.initial_hkd * (1 + hkd_interest_rate) ** years
         
         # 外币定存收益计算
-        # 换汇成外币
-        foreign_currency_amount = self.initial_hkd * hkd_to_currency_rate
+        # 换汇成外币 using buy rate
+        foreign_currency_amount = self.initial_hkd / buy_rate
         
         # 外币定存后金额
         foreign_currency_future = foreign_currency_amount * (1 + currency_interest_rate) ** years
@@ -42,13 +42,13 @@ class ForeignCurrencyDepositAnalyzer:
         # 确定汇率范围
         if exchange_rate_range is None:
             # 如果没有提供汇率范围，假设汇率不变
-            rate_min = rate_max = 1 / hkd_to_currency_rate  # 转换为外币兑港币汇率
+            rate_min = rate_max = sell_rate  # 转换为外币兑港币汇率
         else:
             rate_min, rate_max = exchange_rate_range
         
-        # 计算换回港币后的金额范围
-        hkd_from_foreign_min = foreign_currency_future * rate_min  # 注意：汇率是外币/HKD
-        hkd_from_foreign_max = foreign_currency_future * rate_max
+        # 使用 sell rate 计算换回港币金额范围
+        hkd_from_foreign_min = foreign_currency_future * sell_rate
+        hkd_from_foreign_max = foreign_currency_future * sell_rate
         
         # 计算收益差异
         advantage_min = hkd_from_foreign_min - hkd_future_value
@@ -68,7 +68,7 @@ class ForeignCurrencyDepositAnalyzer:
             'advantage_min': advantage_min,
             'advantage_max': advantage_max,
             'break_even_rate': break_even_rate,
-            'current_rate': 1 / hkd_to_currency_rate,  # 当前外币/HKD汇率
+            'current_rate': buy_rate,  # 当前外币/HKD汇率
             'rate_range': (rate_min, rate_max)
         }
         
@@ -190,37 +190,36 @@ def main():
     currencies_to_analyze = [
         {
             'currency_name': 'USD',
-            'hkd_to_currency_rate': 0.128139,  # 1 HKD = 0.128531 USD
+            'buy_rate': 7.804025316258126,
+            'sell_rate':  7.804025316258126,
             'currency_interest_rate': 0.044,    # 4.4%
             'exchange_rate_range': (7.75, 7.85) # USD/HKD 汇率范围
         },
         {
             'currency_name': 'GBP',
-            #'hkd_to_currency_rate': 0.09769,  # 1 HKD = 0.09769 GBP
-            'hkd_to_currency_rate': 0.097146,  # 1 HKD = 0.09769 GBP
-            #'currency_interest_rate': 0.034,    # 3.4%
-            'currency_interest_rate': 0.128,    # 3.4%
+            'buy_rate': 10.291517,
+            'sell_rate': 10.291517,
+            'currency_interest_rate': 0.118,    # 3.4%
             'exchange_rate_range': (9.4205, 10.8252) # GBP/HKD 汇率范围
         },
         {
             'currency_name': 'EUR',
-            #'hkd_to_currency_rate': 0.118,      # 1 HKD = 0.118 EUR
-            'hkd_to_currency_rate': 0.1105302,      # 1 HKD = 0.118 EUR
-            #'currency_interest_rate': 0.029,    # 2.9%
+            'buy_rate':  9.047301099608976,
+            'sell_rate': 9.047301099608976,
             'currency_interest_rate': 0.069,    # 2.9%
             'exchange_rate_range': (7.9251, 9.287)   # EUR/HKD 汇率范围
         },
         {
             'currency_name': 'AUD',
-            #'hkd_to_currency_rate': 0.198,      # 1 HKD = 0.195 AUD
-            'hkd_to_currency_rate': 0.196155,      # 1 HKD = 0.195 AUD
-            #'currency_interest_rate': 0.034,    # 3.4%
-            'currency_interest_rate': 0.128,    # 3.4%
+            'buy_rate': 5.103960,
+            'sell_rate': 5.103960,
+            'currency_interest_rate': 0.118,    # 11.8%
             'exchange_rate_range': (4.5943, 5.2144)   # AUD/HKD 汇率范围
         },
         {
             'currency_name': 'CNY',
-            'hkd_to_currency_rate': 0.9159,      # 1 HKD = 0.9159 CNY
+            'buy_rate': 1.0918222513374822,
+            'sell_rate': 1.0918222513374822,
             'currency_interest_rate': 0.034,    # 3.4%
             'exchange_rate_range': (1.0548, 1.098)   # CNY/HKD 汇率范围
         }
@@ -249,14 +248,14 @@ def main():
     analyzer.plot_comparison()
 
 # 快速分析单一货币的函数
-def quick_analyze(currency_name, hkd_to_currency_rate, currency_interest_rate, 
+def quick_analyze(currency_name, buy_rate, sell_rate, currency_interest_rate, 
                   hkd_interest_rate=0.023, exchange_rate_range=None, initial_hkd=1000000):
     """
     快速分析单一货币与港币的定存收益对比
     """
     analyzer = ForeignCurrencyDepositAnalyzer(initial_hkd=initial_hkd)
     result = analyzer.calculate_deposit_returns(
-        currency_name, hkd_to_currency_rate, currency_interest_rate,
+        currency_name, buy_rate, sell_rate, currency_interest_rate,
         hkd_interest_rate, exchange_rate_range
     )
     
