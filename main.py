@@ -276,12 +276,13 @@ if __name__ == "__main__":
     main()
     
     # 快速分析示例
-    # print("\n" + "=" * 80)
-    # print("快速分析示例 - 美元定存")
-    # print("=" * 80)
-    # quick_analyze(
-    #     currency_name="USD",
-    #     hkd_to_currency_rate=0.128531,  # 1 HKD = 0.128531 USD
-    #     currency_interest_rate=0.044,    # 4.4%
-    #     exchange_rate_range=(7.75, 7.85) # USD/HKD 汇率范围
-    # )
+    print("\n" + "=" * 80)
+    print("快速分析示例 - 美元定存")
+    print("=" * 80)
+    quick_analyze(
+        currency_name="USD",
+        buy_rate=7.804025316258126,
+        sell_rate=7.804025316258126,
+        currency_interest_rate=0.044,
+        exchange_rate_range=(7.75, 7.85)
+    )
