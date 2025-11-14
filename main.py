@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import pyplot as plt
 
 
 class ForeignCurrencyDepositAnalyzer:
@@ -23,7 +22,8 @@ class ForeignCurrencyDepositAnalyzer:
         
         Parameters:
         currency_name: 外币名称
-        hkd_to_currency_rate: 港币兑外币汇率 (1 HKD = X foreign currency)
+        buy_rate: 港币兑外币汇率 (1 HKD = X foreign currency)
+        sell_rate: 外币兑港币汇率 (1 foreign currency = X HKD)
         currency_interest_rate: 外币年利率
         hkd_interest_rate: 港币年利率 (默认2.3%)
         exchange_rate_range: 汇率波动范围 (min, max)，如不提供则使用当前汇率
@@ -46,13 +46,15 @@ class ForeignCurrencyDepositAnalyzer:
         else:
             rate_min, rate_max = exchange_rate_range
         
-        # 使用 sell rate 计算换回港币金额范围
-        hkd_from_foreign_min = foreign_currency_future * sell_rate
-        hkd_from_foreign_max = foreign_currency_future * sell_rate
+        # 使用汇率范围计算换回港币金额
+        hkd_from_foreign_min = foreign_currency_future * rate_min
+        hkd_from_foreign_max = foreign_currency_future * rate_max
+        hkd_from_foreign_target = foreign_currency_future * sell_rate
         
         # 计算收益差异
         advantage_min = hkd_from_foreign_min - hkd_future_value
         advantage_max = hkd_from_foreign_max - hkd_future_value
+        advantage_target = hkd_from_foreign_target - hkd_future_value
         
         # 计算盈亏平衡汇率
         # 外币定存收益 = 港币定存收益 时的汇率
@@ -65,6 +67,8 @@ class ForeignCurrencyDepositAnalyzer:
             'foreign_currency_future': foreign_currency_future,
             'hkd_from_foreign_min': hkd_from_foreign_min,
             'hkd_from_foreign_max': hkd_from_foreign_max,
+            'hkd_from_foreign_target': hkd_from_foreign_target,
+            'advantage_target': advantage_target,
             'advantage_min': advantage_min,
             'advantage_max': advantage_max,
             'break_even_rate': break_even_rate,
@@ -100,6 +104,7 @@ class ForeignCurrencyDepositAnalyzer:
                 '港币定存收益(HKD)': f"{result['hkd_future_value']:,.2f}",
                 '外币定存最低收益(HKD)': f"{result['hkd_from_foreign_min']:,.2f}",
                 '外币定存最高收益(HKD)': f"{result['hkd_from_foreign_max']:,.2f}",
+                '外币定存目標收益(HKD)': f"{result['hkd_from_foreign_target']:,.2f}",
                 '最低收益差(HKD)': f"{result['advantage_min']:,.2f}",
                 '最高收益差(HKD)': f"{result['advantage_max']:,.2f}",
                 '盈亏平衡汇率': f"{result['break_even_rate']:.4f}",
@@ -119,16 +124,18 @@ class ForeignCurrencyDepositAnalyzer:
         hkd_values = [self.results[currency]['hkd_future_value'] for currency in currencies]
         foreign_min = [self.results[currency]['hkd_from_foreign_min'] for currency in currencies]
         foreign_max = [self.results[currency]['hkd_from_foreign_max'] for currency in currencies]
+        foreign_target = [self.results[currency]['hkd_from_foreign_target'] for currency in currencies]
         
         x = np.arange(len(currencies))
-        width = 0.25
+        width = 0.2
         
         fig, ax = plt.subplots(figsize=(12, 8))
         
         # 创建条形图
         bars1 = ax.bar(x - width, hkd_values, width, label='HKD fixed deposit return', color='blue')
-        bars2 = ax.bar(x, foreign_min, width, label='Minimum Yield of Foreign Currency Fixed Deposit', color='lightcoral')
-        bars3 = ax.bar(x + width, foreign_max, width, label='Maximum Yield of Foreign Currency Fixed Deposit', color='darkred')
+        bars2 = ax.bar(x, foreign_min, width, label='Minimum Yield of Foreign Currency Fixed Deposit', color='darkred')
+        bars3 = ax.bar(x + width, foreign_max, width, label='Maximum Yield of Foreign Currency Fixed Deposit', color='green')
+        bars4 = ax.bar(x + 2*width, foreign_target, width, label='Target Yield of Foreign Currency Fixed Deposit', color='gray')
         
         # 添加数值标签
         def add_value_labels(bars):
@@ -141,12 +148,15 @@ class ForeignCurrencyDepositAnalyzer:
         add_value_labels(bars1)
         add_value_labels(bars2)
         add_value_labels(bars3)
+        add_value_labels(bars4)
         
         ax.set_xlabel('Currency Type')
         ax.set_ylabel('Revenue (HKD)')
         ax.set_title('Comparison between HKD and Foreign Dollars')
         ax.set_xticks(x)
-        ax.set_xticklabels(currencies)
+        labels = [f"{currency} ({self.results[currency]['break_even_rate']:.4f})" for currency in currencies]
+        ax.set_xticklabels(labels)
+        # ax.set_xticklabels(currencies)
         ax.legend()
         
         plt.xticks(rotation=45)
