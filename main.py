@@ -134,8 +134,9 @@ class ForeignCurrencyDepositAnalyzer:
         # 创建条形图
         bars1 = ax.bar(x - width, hkd_values, width, label='HKD fixed deposit return', color='blue')
         bars2 = ax.bar(x, foreign_min, width, label='Minimum Yield of Foreign Currency Fixed Deposit', color='darkred')
-        bars3 = ax.bar(x + width, foreign_max, width, label='Maximum Yield of Foreign Currency Fixed Deposit', color='green')
-        bars4 = ax.bar(x + 2*width, foreign_target, width, label='Target Yield of Foreign Currency Fixed Deposit', color='gray')
+        bars3 = ax.bar(x + width, foreign_target, width, label='Target Yield of Foreign Currency Fixed Deposit', color='gray')
+        bars4 = ax.bar(x + 2*width, foreign_max, width, label='Maximum Yield of Foreign Currency Fixed Deposit', color='green')
+        
         
         # 添加数值标签
         def add_value_labels(bars):
