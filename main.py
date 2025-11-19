@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+import argparse
 
 class ForeignCurrencyDepositAnalyzer:
     def __init__(self, initial_hkd=1000000):
@@ -194,7 +194,7 @@ class ForeignCurrencyDepositAnalyzer:
                        f"预期额外收益为{result['advantage_min']:,.0f}至{result['advantage_max']:,.0f} HKD"
 
 # 使用示例
-def main():
+def main(years=1):
     # 初始化分析器
     analyzer = ForeignCurrencyDepositAnalyzer(initial_hkd=1000000)
     
@@ -206,6 +206,7 @@ def main():
             'sell_rate':  7.804025316258126,
             'currency_interest_rate': 0.044,    # 4.4%
             'exchange_rate_range': (7.75, 7.85) # USD/HKD 汇率范围
+            ,'years': years
         },
         {
             'currency_name': 'GBP',
@@ -213,6 +214,7 @@ def main():
             'sell_rate': 10.133973,
             'currency_interest_rate': 0.118,    # 3.4%
             'exchange_rate_range': (9.4205, 10.8252) # GBP/HKD 汇率范围
+            ,'years': years
         },
         {
             'currency_name': 'EUR',
@@ -220,6 +222,7 @@ def main():
             'sell_rate': 9.047301099608976,
             'currency_interest_rate': 0.069,    # 2.9%
             'exchange_rate_range': (7.9251, 9.287)   # EUR/HKD 汇率范围
+            ,'years': years
         },
         {
             'currency_name': 'AUD',
@@ -227,6 +230,7 @@ def main():
             'sell_rate': 5.01612,
             'currency_interest_rate': 0.118,    # 11.8%
             'exchange_rate_range': (4.5943, 5.2144)   # AUD/HKD 汇率范围
+            ,'years': years
         },
         {
             'currency_name': 'CNY',
@@ -234,6 +238,7 @@ def main():
             'sell_rate': 1.0918222513374822,
             'currency_interest_rate': 0.034,    # 3.4%
             'exchange_rate_range': (1.0548, 1.098)   # CNY/HKD 汇率范围
+            ,'years': years
         }
     ]
     
@@ -284,8 +289,12 @@ def quick_analyze(currency_name, buy_rate, sell_rate, currency_interest_rate,
     return result
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='外汇定存收益分析工具')
+    parser.add_argument('--years', type=float, default=1.0,
+                       help='存款年限 (支持小数如1.5年)')
+    years = parser.parse_args().years
     # 运行完整分析
-    main()
+    main(years)
     
     # 快速分析示例
     print("\n" + "=" * 80)
