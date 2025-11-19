@@ -107,6 +107,7 @@ class ForeignCurrencyDepositAnalyzer:
                 '外币定存目標收益(HKD)': f"{result['hkd_from_foreign_target']:,.2f}",
                 '最低收益差(HKD)': f"{result['advantage_min']:,.2f}",
                 '最高收益差(HKD)': f"{result['advantage_max']:,.2f}",
+                '目標收益差(HKD)': f"{result['advantage_target']:,.2f}",
                 '盈亏平衡汇率': f"{result['break_even_rate']:.4f}",
                 '当前汇率': f"{result['current_rate']:.4f}"
             })
@@ -208,8 +209,8 @@ def main():
         },
         {
             'currency_name': 'GBP',
-            'buy_rate': 10.291517,
-            'sell_rate': 10.291517,
+            'buy_rate': 10.22467,
+            'sell_rate': 10.133973,
             'currency_interest_rate': 0.118,    # 3.4%
             'exchange_rate_range': (9.4205, 10.8252) # GBP/HKD 汇率范围
         },
@@ -222,8 +223,8 @@ def main():
         },
         {
             'currency_name': 'AUD',
-            'buy_rate': 5.103960,
-            'sell_rate': 5.103960,
+            'buy_rate': 5.07658,
+            'sell_rate': 5.01612,
             'currency_interest_rate': 0.118,    # 11.8%
             'exchange_rate_range': (4.5943, 5.2144)   # AUD/HKD 汇率范围
         },
