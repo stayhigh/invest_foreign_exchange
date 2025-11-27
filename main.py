@@ -194,9 +194,9 @@ class ForeignCurrencyDepositAnalyzer:
                        f"预期额外收益为{result['advantage_min']:,.0f}至{result['advantage_max']:,.0f} HKD"
 
 # 使用示例
-def main(years=1):
+def main(years=1, initial_hkd=1000000):
     # 初始化分析器
-    analyzer = ForeignCurrencyDepositAnalyzer(initial_hkd=1000000)
+    analyzer = ForeignCurrencyDepositAnalyzer(initial_hkd)
     
     # 定义多种外币分析参数
     currencies_to_analyze = [
@@ -227,7 +227,7 @@ def main(years=1):
         {
             'currency_name': 'AUD',
             'buy_rate': 5.07658,
-            'sell_rate': 5.01612,
+            'sell_rate': 5.0418,
             'currency_interest_rate': 0.118,    # 11.8%
             'exchange_rate_range': (4.5943, 5.2144)   # AUD/HKD 汇率范围
             ,'years': years
@@ -292,9 +292,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='外汇定存收益分析工具')
     parser.add_argument('--years', type=float, default=1.0,
                        help='存款年限 (支持小数如1.5年)')
+    parser.add_argument('--initial_hkd', type=float, default=1000000.0, help="初始港币金额")
     years = parser.parse_args().years
+    initial_hkd = parser.parse_args().initial_hkd
     # 运行完整分析
-    main(years)
+    main(years, initial_hkd)
     
     # 快速分析示例
     print("\n" + "=" * 80)
