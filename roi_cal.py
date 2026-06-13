@@ -46,15 +46,12 @@ def main():
 
     args = parser.parse_args()
 
-    try:
-        start_rate, end_rate, step, years = validate_inputs(
-            args.start_rate, args.end_rate, args.step, args.years
-        )
-        rates, factors = generate_interest_table(start_rate, end_rate, step, years)
+    start_rate, end_rate, step, years = validate_inputs(
+        args.start_rate, args.end_rate, args.step, args.years
+    )
+    rates, factors = generate_interest_table(start_rate, end_rate, step, years)
     print_table(rates, factors)
-    except ValueError as e:
-        print(f"❌ Error: {e}")
-        exit(1)
+
 
 if __name__ == "__main__":
     main()
