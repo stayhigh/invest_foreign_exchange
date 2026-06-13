@@ -15,7 +15,8 @@ class ForeignCurrencyDepositAnalyzer:
         self.results = {}
     
     def calculate_deposit_returns(self, currency_name, buy_rate, sell_rate, 
-                                 currency_interest_rate, hkd_interest_rate=0.023,
+                                 #currency_interest_rate, hkd_interest_rate=0.023,
+                                 currency_interest_rate, hkd_interest_rate=0.0025,
                                  exchange_rate_range=None, years=1):
         """
         计算外币定存与港币定存的收益对比
@@ -200,12 +201,20 @@ def main(years=1, initial_hkd=1000000):
     
     # 定义多种外币分析参数
     currencies_to_analyze = [
+        #{
+        #    'currency_name': 'USD',
+        #    'buy_rate': 7.804025316258126,
+        #    'sell_rate':  7.804025316258126,
+        #    'currency_interest_rate': 0.044,    # 4.4%
+        #    'exchange_rate_range': (7.75, 7.85) # USD/HKD 汇率范围
+        #    ,'years': years
+        #},
         {
             'currency_name': 'USD',
-            'buy_rate': 7.804025316258126,
-            'sell_rate':  7.804025316258126,
-            'currency_interest_rate': 0.044,    # 4.4%
-            'exchange_rate_range': (7.75, 7.85) # USD/HKD 汇率范围
+            'buy_rate': 1.5349,
+            'sell_rate': 1.5167,
+            'currency_interest_rate': 0.089,    # 8.9%
+            'exchange_rate_range': (1.51, 1.54) # USD/HKD 汇率范围
             ,'years': years
         },
         {
